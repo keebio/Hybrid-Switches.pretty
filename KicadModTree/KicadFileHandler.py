@@ -237,7 +237,10 @@ class KicadFileHandler(FileHandler):
 
         if node.type in [Pad.TYPE_THT, Pad.TYPE_NPTH]:
             if node.drill.x == node.drill.y:
-                sexpr.append(['drill', node.drill.x])
+                if node.offset.x == 0 and node.offset.y == 0:
+                    sexpr.append(['drill', node.drill.x])
+                else:
+                    sexpr.append(['drill', node.drill.x, ['offset', node.offset.x, node.offset.y]])
             else:
                 sexpr.append(['drill', 'oval', node.drill.x, node.drill.y])
 
