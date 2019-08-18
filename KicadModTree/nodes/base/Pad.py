@@ -147,13 +147,17 @@ class Pad(Node):
         return Node.calculateBoundingBox(self)
 
     def _getRenderTreeText(self):
-        render_strings = ['pad']
+        render_strings = ['padd']
         render_strings.append(lispString(self.number))
         render_strings.append(lispString(self.type))
         render_strings.append(lispString(self.shape))
         render_strings.append(self.at.render('(at {x} {y})'))
         render_strings.append(self.size.render('(size {x} {y})'))
-        render_strings.append('(drill {})'.format(self.drill))
+        print self.offset
+        if self.offset == [0, 0]:
+            render_strings.append('(drill {})'.format(self.drill))
+        else:
+            render_strings.append('(drill {} (offset {} {}))'.format(self.drill, self.offset[0], self.offset[1]))
         render_strings.append('(layers {})'.format(' '.join(self.layers)))
 
         render_text = Node._getRenderTreeText(self)

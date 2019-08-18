@@ -12,7 +12,15 @@ class KeyboardSwitchMaker(object):
             'choc': []
         }
         self.support_holes = {
-            'mx': {'locations': [(-5.08, 0), (5.08, 0)], 'size': 1.8},
+            'mx': {'locations': [(-5.08, 0), (5.08, 0)], 'size': 1.75},
+            'choc': []
+        }
+        self.stabilizer_big_holes = {
+            'mx': {'locations': [(-11.938, 8.255), (11.938, 8.255)], 'size': 3.9878},
+            'choc': []
+        }
+        self.stabilizer_small_holes = {
+            'mx': {'locations': [(-11.938, -6.985), (11.938, -6.985)], 'size': 3.048},
             'choc': []
         }
         self.led_pads = {
@@ -40,7 +48,8 @@ class KeyboardSwitchMaker(object):
         self.add_switch_pads(fp, sw_types)
         self.add_led_pads(fp, sw_types)
         self.add_support_holes(fp, sw_types)
-        self.add_stabilizers(fp)
+        if size >= 2:
+            self.add_stabilizers(fp, sw_types)
 
         # Write
         filename = '{}.kicad_mod'.format(name)
@@ -142,20 +151,27 @@ class KeyboardSwitchMaker(object):
         fp.append(Pad(type=Pad.TYPE_NPTH, shape=Pad.SHAPE_CIRCLE, at=[0, 0], size=[drill_size, drill_size], drill=drill_size, layers=Pad.LAYERS_NPTH))
 
         for sw_type in sw_types:
-            if self.support_holes.get(sw_type) is None:
+            if self.stabilizer_big_holes.get(sw_type) is None:
                 continue
-            drill_size = self.support_holes[sw_type]['size']
-            for hole_location in self.support_holes[sw_type]['locations']:
+            drill_size = self.stabilizer_big_holes[sw_type]['size']
+            for hole_location in self.stabilizer_big_holes[sw_type]['locations']:
                 fp.append(Pad(type=Pad.TYPE_NPTH, shape=Pad.SHAPE_CIRCLE, at=hole_location, size=[drill_size, drill_size], drill=drill_size, layers=Pad.LAYERS_NPTH))
 
-    def add_stabilizers(self, fp):
+    def add_stabilizers(self, fp, sw_types):
+        for sw_type in sw_types:
+            for holes in [self.stabilizer_big_holes, self.stabilizer_small_holes]:
+                if holes.get(sw_type) is None:
+                    continue
+                drill_size = holes[sw_type]['size']
+                for hole_location in holes[sw_type]['locations']:
+                    fp.append(Pad(type=Pad.TYPE_NPTH, shape=Pad.SHAPE_CIRCLE, at=hole_location, size=[drill_size, drill_size], drill=drill_size, layers=Pad.LAYERS_NPTH))
         return
 
     def make_switches(self):
-        sizes = [1]
+        sizes = [1, 1.25, 1.5, 1.75, 2.25]
         hybrid_types = [
             ['mx'],
-            ['mx', 'alps']
+            #['mx', 'alps']
         ]
         for size in sizes:
             for hybrid_type in hybrid_types:
