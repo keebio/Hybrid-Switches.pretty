@@ -151,10 +151,10 @@ class KeyboardSwitchMaker(object):
         fp.append(Pad(type=Pad.TYPE_NPTH, shape=Pad.SHAPE_CIRCLE, at=[0, 0], size=[drill_size, drill_size], drill=drill_size, layers=Pad.LAYERS_NPTH))
 
         for sw_type in sw_types:
-            if self.stabilizer_big_holes.get(sw_type) is None:
+            if self.support_holes.get(sw_type) is None:
                 continue
-            drill_size = self.stabilizer_big_holes[sw_type]['size']
-            for hole_location in self.stabilizer_big_holes[sw_type]['locations']:
+            drill_size = self.support_holes[sw_type]['size']
+            for hole_location in self.support_holes[sw_type]['locations']:
                 fp.append(Pad(type=Pad.TYPE_NPTH, shape=Pad.SHAPE_CIRCLE, at=hole_location, size=[drill_size, drill_size], drill=drill_size, layers=Pad.LAYERS_NPTH))
 
     def add_stabilizers(self, fp, sw_types):
