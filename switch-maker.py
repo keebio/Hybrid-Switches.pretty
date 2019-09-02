@@ -35,7 +35,7 @@ class KeyboardSwitchMaker(object):
         self.switch_spacing = 19.05
         self.type_names = {'mx': 'MX', 'alps': 'Alps', 'choc': 'Choc'}
 
-    def make_switch(self, name, size, sw_types):
+    def make_switch(self, name, size, sw_types, led_flip=False):
         fp = Footprint(name)
         fp.setDescription('MX/Alps footprint')
 
@@ -46,7 +46,10 @@ class KeyboardSwitchMaker(object):
         self.add_borders(fp, size)
         self.add_cutouts(fp, sw_types)
         self.add_switch_pads(fp, sw_types)
-        self.add_led_pads(fp, sw_types)
+        if led_flip:
+            self.add_led_pads_reversed(fp, sw_types)
+        else:
+            self.add_led_pads(fp, sw_types)
         self.add_support_holes(fp, sw_types)
         if size >= 2:
             self.add_stabilizers(fp, sw_types)
@@ -131,6 +134,16 @@ class KeyboardSwitchMaker(object):
             fp.append(Text(type='user', text='+', at=[pads[0][0], 3.5], layer=layer))
             fp.append(Text(type='user', text='-', at=[pads[1][0], 3.5], layer=layer))
 
+    def add_led_pads_reversed(self, fp, sw_types):
+        pad_size = 1.905
+        drill_size = 0.9906
+        pads = self.led_pads[sw_types[0]]
+        fp.append(Pad(number=3, type=Pad.TYPE_THT, shape=Pad.SHAPE_CIRCLE, at=pads[1], size=[pad_size, pad_size], drill=drill_size, layers=Pad.LAYERS_THT))
+        fp.append(Pad(number=4, type=Pad.TYPE_THT, shape=Pad.SHAPE_RECT, at=pads[0], size=[pad_size, pad_size], drill=drill_size, layers=Pad.LAYERS_THT))
+        for layer in ('F.SilkS', 'B.SilkS'):
+            fp.append(Text(type='user', text='+', at=[pads[1][0], 3.5], layer=layer))
+            fp.append(Text(type='user', text='-', at=[pads[0][0], 3.5], layer=layer))
+
     def add_cutouts(self, fp, sw_types):
         for sw_type in sw_types:
             width, height = self.cutout_size[sw_type]
@@ -168,7 +181,7 @@ class KeyboardSwitchMaker(object):
         return
 
     def make_switches(self):
-        sizes = [1, 1.25, 1.5, 1.75, 2.25]
+        sizes = [1, 1.25, 1.5, 1.75, 2, 2.25, 2.75]
         hybrid_types = [
             ['mx'],
             #['mx', 'alps']
@@ -178,6 +191,12 @@ class KeyboardSwitchMaker(object):
                 hybrid_name = '-'.join(self.type_names[sw_type] for sw_type in hybrid_type)
                 name = '{}-{}u'.format(hybrid_name, size)
                 self.make_switch(name, size, hybrid_type)
+
+        for size in sizes:
+            for hybrid_type in hybrid_types:
+                hybrid_name = '-'.join(self.type_names[sw_type] for sw_type in hybrid_type)
+                name = '{}-{}u-LEDFlip'.format(hybrid_name, size)
+                self.make_switch(name, size, hybrid_type, led_flip=True)
 
 m = KeyboardSwitchMaker()
 m.make_switches()
