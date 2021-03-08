@@ -11,16 +11,10 @@
 # You should have received a copy of the GNU General Public License
 # along with kicad-footprint-generator. If not, see < http://www.gnu.org/licenses/ >.
 #
-# (C) 2016 by Thomas Pointhuber, <thomas.pointhuber@gmx.at>
+# (C) 2018 by Thomas Pointhuber, <thomas.pointhuber@gmx.at>
 
-from KicadModTree.Vector import *
-from KicadModTree.Point import *  # backwards compatibility
-
-# all different types of nodes
-from KicadModTree.nodes import *
-
-# File Handlers
-from KicadModTree.KicadFileHandler import KicadFileHandler
-
-# Argparser
-from KicadModTree.ModArgparser import ModArgparser
+from .test_simple_footprints import SimpleFootprintTests
+from .test_kicad5_padshapes import Kicad5PadsTests
+from .test_exposed_pad import ExposedPadTests
+from .test_arc import ArcTests
+from .test_rotation import RotationTests

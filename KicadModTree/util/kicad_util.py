@@ -11,7 +11,7 @@
 # You should have received a copy of the GNU General Public License
 # along with kicad-footprint-generator. If not, see < http://www.gnu.org/licenses/ >.
 #
-# (C) 2016 by Thomas Pointhuber, <thomas.pointhuber@gmx.at>
+# (C) 2016-2018 by Thomas Pointhuber, <thomas.pointhuber@gmx.at>
 
 import time
 import re
@@ -21,7 +21,10 @@ def formatFloat(val):
     '''
     return well formated float
     '''
-    return ('%f' % val).rstrip('0').rstrip('.')
+    result = ('%f' % val).rstrip('0').rstrip('.')
+    if result == '-0':
+        result = '0'
+    return result
 
 
 def lispString(string):
@@ -32,7 +35,7 @@ def lispString(string):
         string = str(string)
 
     if len(string) == 0 or re.match(".*\s.*", string):
-        return '"{}"'.format(string.replace('"', '/"'))  # escape text
+        return '"{}"'.format(string.replace('"', '\\"'))  # escape text
 
     return string
 
@@ -81,7 +84,7 @@ def lispTokenizer(input):
     if in_string:
         raise RuntimeError("missing closing quotation mark")
 
-    # TOOD: remove invalid spaces from qotation (when having brackets inside)
+    # TOOD: remove invalid spaces from quotation (when having brackets inside)
 
     return tokens
 
@@ -149,7 +152,7 @@ class SexprSerializer(object):
         # see: https://stackoverflow.com/questions/3190706/nonlocal-keyword-in-python-2-x
         loop_ctrl = {'first': True, 'indentation': False}
 
-        def get_seperator():
+        def get_separator():
             if loop_ctrl['first']:
                 loop_ctrl['first'] = False
                 return_str = ""
@@ -168,7 +171,7 @@ class SexprSerializer(object):
 
                 if loop_ctrl['indentation']:
                     return_string = return_string.replace('\n', '\n ')
-                serial_string += get_seperator()
+                serial_string += get_separator()
 
                 serial_string += return_string
             elif attr == SexprSerializer.NEW_LINE:
@@ -176,7 +179,7 @@ class SexprSerializer(object):
                 serial_string += prefix
                 loop_ctrl['indentation'] = True
             else:
-                serial_string += get_seperator()
+                serial_string += get_separator()
                 serial_string += self.primitive_to_string(attr)
 
         serial_string += ")"
@@ -195,7 +198,7 @@ def parseTimestamp(timestamp):
 
 
 def formatTimestamp(timestamp=None):
-    if not timestamp:
+    if timestamp is None:
         timestamp = time.time()
 
     return "{timestamp:X}".format(timestamp=int(timestamp))
