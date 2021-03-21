@@ -56,7 +56,7 @@ class KeyboardSwitchMaker(object):
             'mx-hotswap': 'MX-Hotswap'
         }
 
-    def make_switch(self, name, size, sw_types, led_flip=False):
+    def make_switch(self, name, size, sw_types, led_flip=False, anti_shear=False):
         fp = Footprint(name)
         fp.setDescription('MX/Alps footprint')
 
@@ -70,7 +70,7 @@ class KeyboardSwitchMaker(object):
         self.add_cutouts(fp, sw_types)
         #self.add_switch_pads(fp, sw_types)
         if 'mx-hotswap' in sw_types:
-            self.add_hotswap(fp, sw_types)
+            self.add_hotswap(fp, sw_types, add_via_pads=anti_shear)
         if led_flip:
             self.add_led_pads_reversed(fp, sw_types)
         else:
@@ -218,7 +218,7 @@ class KeyboardSwitchMaker(object):
                     fp.append(Pad(type=Pad.TYPE_NPTH, shape=Pad.SHAPE_CIRCLE, at=hole_location, size=[
                               drill_size, drill_size], drill=drill_size, layers=Pad.LAYERS_NPTH))
 
-    def add_hotswap(self, fp, sw_types):
+    def add_hotswap(self, fp, sw_types, add_via_pads=False):
         for sw_type in sw_types:
             info = self.hotswap_info.get(sw_type)
             if info is None:
@@ -259,6 +259,17 @@ class KeyboardSwitchMaker(object):
                       angle=-75.4, layer=outline_layer))
         fp.append(RectLine(start=p7, end=p1, layer=outline_layer))
 
+        # Add Via pads for anti-shear
+        if add_via_pads:
+            pad_size = 0.8
+            drill_size = 0.4
+            via_pads = (((-7.874, -3.305), (-7.874, -1.778)),
+                        ((6.604, -5.842), (6.604, -4.318)))
+            for pad_num, pad_locations in enumerate(via_pads):
+                for pad_location in pad_locations:
+                    fp.append(Pad(number=pad_num, type=Pad.TYPE_THT, shape=Pad.SHAPE_CIRCLE, at=pad_location, size=[
+                        pad_size, pad_size], drill=drill_size, layers=Pad.LAYERS_THT))
+
         # Add 3D Model
         fp.append(Model(
             filename='/Users/danny/syncproj/kicad-libs/footprints/Keebio-Switches.pretty/3dmodels/Kailh Hotswap MX v22.step',
@@ -279,6 +290,14 @@ class KeyboardSwitchMaker(object):
                                        for sw_type in hybrid_type)
                 name = '{}-{}u'.format(hybrid_name, size)
                 self.make_switch(name, size, hybrid_type)
+
+        # Anti-shear hotswap
+        for size in sizes:
+            for hybrid_type in hybrid_types:
+                hybrid_name = '-'.join(self.type_names[sw_type]
+                                       for sw_type in hybrid_type)
+                name = '{}-{}u-Antishear'.format(hybrid_name, size)
+                self.make_switch(name, size, hybrid_type, anti_shear=True)
 
         '''
         for size in sizes:
