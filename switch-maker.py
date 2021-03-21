@@ -267,7 +267,7 @@ class KeyboardSwitchMaker(object):
                         ((6.604, -5.842), (6.604, -4.318)))
             for pad_num, pad_locations in enumerate(via_pads):
                 for pad_location in pad_locations:
-                    fp.append(Pad(number=pad_num, type=Pad.TYPE_THT, shape=Pad.SHAPE_CIRCLE, at=pad_location, size=[
+                    fp.append(Pad(number=pad_num+1, type=Pad.TYPE_THT, shape=Pad.SHAPE_CIRCLE, at=pad_location, size=[
                         pad_size, pad_size], drill=drill_size, layers=Pad.LAYERS_THT))
 
         # Add 3D Model
