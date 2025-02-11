@@ -70,8 +70,8 @@ class KeyboardSwitchMaker(object):
         self.add_cutouts(fp, sw_types)
         #self.add_switch_pads(fp, sw_types)
         if 'mx-hotswap' in sw_types:
-            #self.add_hotswap(fp, sw_types, add_via_pads=anti_shear)
-            self.add_hotswap_outemu(fp, sw_types, add_via_pads=anti_shear)
+            self.add_hotswap(fp, sw_types, add_via_pads=anti_shear)
+            #self.add_hotswap_outemu(fp, sw_types, add_via_pads=anti_shear)
         if led_flip:
             self.add_led_pads_reversed(fp, sw_types)
         else:
@@ -84,7 +84,7 @@ class KeyboardSwitchMaker(object):
         filename = '{}.kicad_mod'.format(name)
         file_handler = KicadFileHandler(fp)
         file_handler.writeFile(filename)
-        print 'Wrote {}'.format(filename)
+        print('Wrote {}'.format(filename))
 
     def add_borders(self, fp, size):
         width = size * self.switch_spacing
@@ -121,7 +121,7 @@ class KeyboardSwitchMaker(object):
         location = self.oval_location(pads)
         angle = self.oval_angle(pads)
         offset = -self.pad_distance(pads)/2
-        print offset
+        print(offset)
         fp.append(Pad(
             number=pad_number,
             type=Pad.TYPE_THT,
@@ -393,5 +393,5 @@ class KeyboardSwitchMaker(object):
 
 
 m = KeyboardSwitchMaker()
-# m.make_switches()
-m.make_hotswap_outemu()
+m.make_switches()
+#m.make_hotswap_outemu()
