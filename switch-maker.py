@@ -36,9 +36,9 @@ class KeyboardSwitchMaker(object):
         }
         self.hotswap_info = {
             'mx-hotswap': {
-                'pads': [(-7.085, -2.54), (5.842, -5.08)],
+                'pads': [(7.085, -2.54), (-5.842, -5.08)],
                 'hole_size': 3.0,
-                'holes': [(-3.81, -2.54), (2.54, -5.08)],
+                'holes': [(3.81, -2.54), (-2.54, -5.08)],
                 'pad_size': (2.55, 2.5),
             }
         }
@@ -229,7 +229,7 @@ class KeyboardSwitchMaker(object):
 
             # Add pads
             pad_size = info['pad_size']
-            pad_layers = ['B.Cu', 'B.Mask', 'B.Paste']
+            pad_layers = ['F.Cu', 'F.Mask', 'F.Paste']
             for pad_number, pad_location in enumerate(info['pads']):
                 fp.append(Pad(number=pad_number+1, type=Pad.TYPE_SMT, shape=Pad.SHAPE_RECT,
                               at=pad_location, size=pad_size, layers=pad_layers))
@@ -241,24 +241,24 @@ class KeyboardSwitchMaker(object):
                           hole_size, hole_size], drill=hole_size, layers=Pad.LAYERS_NPTH))
 
         # Add socket outline
-        p1 = (-6.35, -0.635)
-        p2 = (-6.35, -4.445)
-        p3 = (-3.81, -6.985)
-        c2_3 = (-3.81, -4.445)
-        p4 = (5.08, -6.985)
-        p5 = (5.08, -2.54)
+        p1 = (6.35, -0.635)
+        p2 = (6.35, -4.445)
+        p3 = (3.81, -6.985)
+        c2_3 = (3.81, -4.445)
+        p4 = (-5.08, -6.985)
+        p5 = (-5.08, -2.54)
         p6 = (0, -2.54)
-        c6_7 = (-2.464162, -2.54)
-        p7 = (-2.464162, -0.635)
-        outline_layer = 'B.SilkS'
+        c6_7 = (2.464162, -2.54)
+        p7 = (2.464162, -0.635)
+        outline_layer = 'F.SilkS'
 
         fp.append(RectLine(start=p1, end=p2, layer=outline_layer))
-        fp.append(Arc(center=c2_3, start=p2, end=p3,
+        fp.append(Arc(center=c2_3, start=p3, end=p2,
                       angle=90, layer=outline_layer))
         fp.append(RectLine(start=p3, end=p4, layer=outline_layer))
         fp.append(RectLine(start=p4, end=p5, layer=outline_layer))
         fp.append(RectLine(start=p5, end=p6, layer=outline_layer))
-        fp.append(Arc(center=(0, 0), start=p6, end=p7,
+        fp.append(Arc(center=(0, 0), start=p7, end=p6,
                       angle=-75.4, layer=outline_layer))
         fp.append(RectLine(start=p7, end=p1, layer=outline_layer))
 
@@ -276,8 +276,8 @@ class KeyboardSwitchMaker(object):
         # Add 3D Model
         fp.append(Model(
             filename='/Users/danny/syncproj/kicad-libs/footprints/Keebio-Switches.pretty/3dmodels/Kailh Hotswap MX v22.step',
-            at=[-0.6/25.4, 4.75/25.4, -3.5/25.4],
-            rotate=[0, 0, 180]
+            at=[0.6/25.4, 4.75/25.4, 1.7/25.4],
+            rotate=[0, 180, 180]
         ))
 
     def add_hotswap_outemu(self, fp, sw_types, add_via_pads=False):
